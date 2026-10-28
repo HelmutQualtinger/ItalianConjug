@@ -135,10 +135,11 @@ const conj = (title, forms, extra = "") => `
     ${extra}
   </div>`;
 
-const multi = (head, rows) => `
+const PC = P.map(p => "che " + p);
+const multi = (head, rows, pr = P) => `
   <div class="wide card"><table>
     <tr><th></th>${head.map(h => `<th>${h}</th>`).join("")}</tr>
-    ${P.map((p, i) => `<tr><td class="p">${p}</td>${rows.map(r => `<td>${fmt(r[i])}</td>`).join("")}</tr>`).join("")}
+    ${pr.map((p, i) => `<tr><td class="p">${p}</td>${rows.map(r => `<td>${fmt(r[i])}</td>`).join("")}</tr>`).join("")}
   </table></div>`;
 
 const slide = (kicker, title, body, lead = "") => `
@@ -241,6 +242,39 @@ const slides = [
     <div class="note">Stessa radice del futuro, desinenze diverse. Si usa per desideri e richieste cortesi: <span class="ex">Vorrei un caffè.</span></div>
   `, "Desinenze: -ei, -esti, -ebbe, -emmo, -este, -ebbero."),
 
+  slide("Passato remoto", "Il passato remoto", `
+    ${multi(["parlare", "credere", "dormire / finire"], [
+      ["parl|ai","parl|asti","parl|ò","parl|ammo","parl|aste","parl|arono"],
+      ["cred|ei","cred|esti","cred|é","cred|emmo","cred|este","cred|erono"],
+      ["dorm|ii","dorm|isti","dorm|ì","dorm|immo","dorm|iste","dorm|irono"]
+    ])}
+    <div class="note">Nei verbi in -ere esistono anche le forme in <b>-etti, -ette, -ettero</b>: credetti, credette, credettero.<br>
+    I verbi in -isc- non usano l'infisso: finii, finisti, finì…<br>
+    Si usa per azioni concluse in un passato lontano, soprattutto nella lingua scritta e nei racconti: <span class="ex">Dante nacque a Firenze nel 1265.</span></div>
+  `, "Tempo storico e letterario; nel parlato del Sud è ancora molto vivo."),
+
+  slide("Congiuntivo presente", "Il congiuntivo presente", `
+    ${multi(["parlare", "credere", "dormire", "finire"], [
+      ["parl|i","parl|i","parl|i","parl|iamo","parl|iate","parl|ino"],
+      ["cred|a","cred|a","cred|a","cred|iamo","cred|iate","cred|ano"],
+      ["dorm|a","dorm|a","dorm|a","dorm|iamo","dorm|iate","dorm|ano"],
+      ["fin|isca","fin|isca","fin|isca","fin|iamo","fin|iate","fin|iscano"]
+    ], PC)}
+    <div class="note">Le tre persone singolari sono uguali: spesso si aggiunge il pronome per chiarezza.
+    I verbi in -are prendono la <b>-i</b>, quelli in -ere e -ire la <b>-a</b>.<br>
+    Si usa dopo verbi di opinione, desiderio, dubbio e sentimento: <span class="ex">Penso che lui parli bene.</span> <span class="ex">Voglio che tu dorma.</span></div>
+  `, "Il modo della soggettività: opinioni, desideri, dubbi, emozioni."),
+
+  slide("Congiuntivo imperfetto", "Il congiuntivo imperfetto", `
+    ${multi(["parlare", "credere", "dormire / finire"], [
+      ["parl|assi","parl|assi","parl|asse","parl|assimo","parl|aste","parl|assero"],
+      ["cred|essi","cred|essi","cred|esse","cred|essimo","cred|este","cred|essero"],
+      ["dorm|issi","dorm|issi","dorm|isse","dorm|issimo","dorm|iste","dorm|issero"]
+    ], PC)}
+    <div class="note">Vocale tematica + <b>-ssi, -ssi, -sse, -ssimo, -ste, -ssero</b>. Pochi verbi irregolari: fare &rarr; facessi, dire &rarr; dicessi, bere &rarr; bevessi, stare &rarr; stessi, dare &rarr; dessi.<br>
+    Si usa con il verbo principale al passato e nel periodo ipotetico: <span class="ex">Pensavo che tu dormissi.</span> <span class="ex">Se parlassi italiano, andrei a Roma.</span></div>
+  `, "Il congiuntivo del passato e delle ipotesi."),
+
   slide("Passato prossimo", "Il passato prossimo: ausiliare + participio passato", `
     <div class="grid">
       <div class="card"><h3>Participi regolari</h3>
@@ -278,7 +312,23 @@ const slides = [
       <div class="card"><h3>Participio passato</h3><b>avuto</b> – con l'ausiliare avere: <span class="ex">ho avuto</span></div>
       <div class="card"><h3>La h muta</h3>La <b>h</b> di ho, hai, ha, hanno non si pronuncia. Serve a distinguerle da o (congiunzione), ai (preposizione), a (preposizione), anno (nome).</div>
     </div>
-    <div class="note">L'imperfetto di avere è regolare; sono irregolari solo il presente, il futuro e il condizionale.</div>
+    <div class="note">L'imperfetto di avere (avevo) e il congiuntivo imperfetto (avessi) sono regolari; sono irregolari il presente, il futuro, il condizionale, il passato remoto (ebbi) e il congiuntivo presente (abbia).</div>
+  `),
+
+  slide("Verbi irregolari · essere e avere", "Essere e avere: passato remoto e congiuntivo", `
+    <h3>essere</h3>
+    ${multi(["passato remoto", "congiuntivo presente", "congiuntivo imperfetto"], [
+      ["fui","fosti","fu","fummo","foste","furono"],
+      ["sia","sia","sia","siamo","siate","siano"],
+      ["fossi","fossi","fosse","fossimo","foste","fossero"]
+    ])}
+    <h3 style="margin-top:20px">avere</h3>
+    ${multi(["passato remoto", "congiuntivo presente", "congiuntivo imperfetto"], [
+      ["ebbi","avesti","ebbe","avemmo","aveste","ebbero"],
+      ["abbia","abbia","abbia","abbiamo","abbiate","abbiano"],
+      ["avessi","avessi","avesse","avessimo","aveste","avessero"]
+    ])}
+    <div class="note">Al congiuntivo si dice <i>che io sia, che io abbia</i>. Esempi: <span class="ex">Spero che tu sia contento.</span> <span class="ex">Se avessi tempo, verrei.</span></div>
   `),
 
   slide("Ausiliari", "Avere o essere nei tempi composti?", `
@@ -316,6 +366,32 @@ const slides = [
       ["bevo","bevi","beve","beviamo","bevete","bevono"]
     ])}
     <div class="note">I verbi modali (potere, volere, dovere) sono seguiti da un infinito: <span class="ex">Devo lavorare.</span></div>
+  `),
+
+  slide("Verbi irregolari · passato remoto", "Passato remoto irregolare", `
+    ${multi(["fare", "dire", "venire", "vedere", "prendere", "stare"], [
+      ["feci","facesti","fece","facemmo","faceste","fecero"],
+      ["dissi","dicesti","disse","dicemmo","diceste","dissero"],
+      ["venni","venisti","venne","venimmo","veniste","vennero"],
+      ["vidi","vedesti","vide","vedemmo","vedeste","videro"],
+      ["presi","prendesti","prese","prendemmo","prendeste","presero"],
+      ["stetti","stesti","stette","stemmo","steste","stettero"]
+    ])}
+    <div class="note">Regola <b>1-3-6</b>: molti verbi sono irregolari solo in io, lui/lei e loro; le altre persone sono regolari.
+    Altri esempi: sapere (seppi), volere (volli), dare (diedi), scrivere (scrissi), leggere (lessi), nascere (nacqui).</div>
+  `, "Molti verbi della 2ª coniugazione hanno un passato remoto irregolare."),
+
+  slide("Verbi irregolari · congiuntivo", "Congiuntivo presente irregolare", `
+    ${multi(["andare", "fare", "venire", "potere", "volere", "dovere"], [
+      ["vada","vada","vada","andiamo","andiate","vadano"],
+      ["faccia","faccia","faccia","facciamo","facciate","facciano"],
+      ["venga","venga","venga","veniamo","veniate","vengano"],
+      ["possa","possa","possa","possiamo","possiate","possano"],
+      ["voglia","voglia","voglia","vogliamo","vogliate","vogliano"],
+      ["debba","debba","debba","dobbiamo","dobbiate","debbano"]
+    ], PC)}
+    <div class="note">Il congiuntivo si forma di solito dalla radice di <i>io</i> al presente indicativo: vado &rarr; vada, faccio &rarr; faccia, vengo &rarr; venga.
+    Altri: stare (stia), dare (dia), sapere (sappia), dire (dica), uscire (esca).</div>
   `),
 
   slide("Participi", "Participi passati irregolari comuni", `
@@ -356,6 +432,8 @@ const slides = [
       <li>Presente: io <b>-o</b>, tu <b>-i</b>, noi <b>-iamo</b> in tutte le coniugazioni; le altre persone dipendono dal gruppo.</li>
       <li>Alcuni verbi in -ire inseriscono <b>-isc-</b> (finisco), tranne in noi e voi.</li>
       <li>Imperfetto: vocale + <b>-vo</b>. Futuro: <b>-ò, -ai, -à…</b> Condizionale: <b>-ei, -esti, -ebbe…</b></li>
+      <li>Passato remoto: <b>-ai, -ei, -ii</b> (parlai, credei, dormii); molti verbi in -ere sono irregolari (feci, dissi, vidi).</li>
+      <li>Congiuntivo presente: <b>-i</b> per -are, <b>-a</b> per -ere/-ire. Congiuntivo imperfetto: vocale + <b>-ssi</b> (parlassi).</li>
       <li><b>essere</b> e <b>avere</b> sono irregolari e fanno da ausiliari in tutti i tempi composti.</li>
       <li>essere per movimento, cambiamento di stato e verbi riflessivi, con accordo del participio; avere per quasi tutti gli altri.</li>
       <li>Conviene imparare presto i verbi irregolari più frequenti: andare, fare, stare, venire, potere, volere, dovere.</li>
@@ -369,7 +447,7 @@ const slides = [
           <option value="all">tutti i verbi</option>
           <option value="reg">verbi regolari</option>
           <option value="ea">essere e avere</option>
-          <option value="irr">altri verbi irregolari (presente)</option>
+          <option value="irr">altri verbi irregolari</option>
         </select></div>
       <p class="qtext" id="q1-q"></p>
       <form id="q1-f">
@@ -500,6 +578,11 @@ const PRES = { are: ["o","i","a","iamo","ate","ano"], ere: ["o","i","e","iamo","
                ire: ["o","i","e","iamo","ite","ono"], isc: ["isco","isci","isce","iamo","ite","iscono"] };
 const FUT = ["ò","ai","à","emo","ete","anno"], COND = ["ei","esti","ebbe","emmo","este","ebbero"];
 const IMPF = ["vo","vi","va","vamo","vate","vano"];
+const PREM = { are: ["ai","asti","ò","ammo","aste","arono"], ere: ["ei/etti","esti","é/ette","emmo","este","erono/ettero"],
+               ire: ["ii","isti","ì","immo","iste","irono"] };
+const CPRES = { are: ["i","i","i","iamo","iate","ino"], ere: ["a","a","a","iamo","iate","ano"],
+                ire: ["a","a","a","iamo","iate","ano"], isc: ["isca","isca","isca","iamo","iate","iscano"] };
+const CIMP = ["ssi","ssi","sse","ssimo","ste","ssero"];
 function regular(inf, isc = false) {
   const stem = inf.slice(0, -3), g = inf.slice(-3), v = g[0];
   const fstem = stem + (g === "ire" ? "ir" : "er");
@@ -507,7 +590,10 @@ function regular(inf, isc = false) {
     presente: PRES[isc ? "isc" : g].map(e => stem + e),
     imperfetto: IMPF.map(e => stem + v + e),
     futuro: FUT.map(e => fstem + e),
-    condizionale: COND.map(e => fstem + e)
+    condizionale: COND.map(e => fstem + e),
+    "passato remoto": PREM[g].map(e => e.split("/").map(x => stem + x).join("/")),
+    "congiuntivo presente": CPRES[isc ? "isc" : g].map(e => stem + e),
+    "congiuntivo imperfetto": CIMP.map(e => stem + v + e)
   };
 }
 const BANK = {
@@ -517,23 +603,39 @@ const BANK = {
   ].map(([v, isc]) => [v, regular(v, isc)])),
   ea: {
     essere: { presente: ["sono","sei","è","siamo","siete","sono"], imperfetto: ["ero","eri","era","eravamo","eravate","erano"],
-              futuro: ["sarò","sarai","sarà","saremo","sarete","saranno"], condizionale: ["sarei","saresti","sarebbe","saremmo","sareste","sarebbero"] },
+              futuro: ["sarò","sarai","sarà","saremo","sarete","saranno"], condizionale: ["sarei","saresti","sarebbe","saremmo","sareste","sarebbero"],
+              "passato remoto": ["fui","fosti","fu","fummo","foste","furono"], "congiuntivo presente": ["sia","sia","sia","siamo","siate","siano"],
+              "congiuntivo imperfetto": ["fossi","fossi","fosse","fossimo","foste","fossero"] },
     avere:  { presente: ["ho","hai","ha","abbiamo","avete","hanno"], imperfetto: ["avevo","avevi","aveva","avevamo","avevate","avevano"],
-              futuro: ["avrò","avrai","avrà","avremo","avrete","avranno"], condizionale: ["avrei","avresti","avrebbe","avremmo","avreste","avrebbero"] }
+              futuro: ["avrò","avrai","avrà","avremo","avrete","avranno"], condizionale: ["avrei","avresti","avrebbe","avremmo","avreste","avrebbero"],
+              "passato remoto": ["ebbi","avesti","ebbe","avemmo","aveste","ebbero"], "congiuntivo presente": ["abbia","abbia","abbia","abbiamo","abbiate","abbiano"],
+              "congiuntivo imperfetto": ["avessi","avessi","avesse","avessimo","aveste","avessero"] }
   },
   irr: {
-    andare: { presente: ["vado","vai","va","andiamo","andate","vanno"] },
-    fare:   { presente: ["faccio","fai","fa","facciamo","fate","fanno"] },
-    stare:  { presente: ["sto","stai","sta","stiamo","state","stanno"] },
-    dare:   { presente: ["do","dai","dà","diamo","date","danno"] },
-    venire: { presente: ["vengo","vieni","viene","veniamo","venite","vengono"] },
-    uscire: { presente: ["esco","esci","esce","usciamo","uscite","escono"] },
-    potere: { presente: ["posso","puoi","può","possiamo","potete","possono"] },
-    volere: { presente: ["voglio","vuoi","vuole","vogliamo","volete","vogliono"] },
-    dovere: { presente: ["devo","devi","deve","dobbiamo","dovete","devono"] },
-    sapere: { presente: ["so","sai","sa","sappiamo","sapete","sanno"] },
-    dire:   { presente: ["dico","dici","dice","diciamo","dite","dicono"] },
-    bere:   { presente: ["bevo","bevi","beve","beviamo","bevete","bevono"] }
+    andare: { presente: ["vado","vai","va","andiamo","andate","vanno"],
+              "congiuntivo presente": ["vada","vada","vada","andiamo","andiate","vadano"] },
+    fare:   { presente: ["faccio","fai","fa","facciamo","fate","fanno"],
+              "passato remoto": ["feci","facesti","fece","facemmo","faceste","fecero"], "congiuntivo presente": ["faccia","faccia","faccia","facciamo","facciate","facciano"], "congiuntivo imperfetto": ["facessi","facessi","facesse","facessimo","faceste","facessero"] },
+    stare:  { presente: ["sto","stai","sta","stiamo","state","stanno"],
+              "passato remoto": ["stetti","stesti","stette","stemmo","steste","stettero"], "congiuntivo presente": ["stia","stia","stia","stiamo","stiate","stiano"], "congiuntivo imperfetto": ["stessi","stessi","stesse","stessimo","steste","stessero"] },
+    dare:   { presente: ["do","dai","dà","diamo","date","danno"],
+              "passato remoto": ["diedi/detti","desti","diede/dette","demmo","deste","diedero/dettero"], "congiuntivo presente": ["dia","dia","dia","diamo","diate","diano"], "congiuntivo imperfetto": ["dessi","dessi","desse","dessimo","deste","dessero"] },
+    venire: { presente: ["vengo","vieni","viene","veniamo","venite","vengono"],
+              "passato remoto": ["venni","venisti","venne","venimmo","veniste","vennero"], "congiuntivo presente": ["venga","venga","venga","veniamo","veniate","vengano"] },
+    uscire: { presente: ["esco","esci","esce","usciamo","uscite","escono"],
+              "congiuntivo presente": ["esca","esca","esca","usciamo","usciate","escano"] },
+    potere: { presente: ["posso","puoi","può","possiamo","potete","possono"],
+              "congiuntivo presente": ["possa","possa","possa","possiamo","possiate","possano"] },
+    volere: { presente: ["voglio","vuoi","vuole","vogliamo","volete","vogliono"],
+              "passato remoto": ["volli","volesti","volle","volemmo","voleste","vollero"], "congiuntivo presente": ["voglia","voglia","voglia","vogliamo","vogliate","vogliano"] },
+    dovere: { presente: ["devo","devi","deve","dobbiamo","dovete","devono"],
+              "congiuntivo presente": ["debba","debba","debba","dobbiamo","dobbiate","debbano"] },
+    sapere: { presente: ["so","sai","sa","sappiamo","sapete","sanno"],
+              "passato remoto": ["seppi","sapesti","seppe","sapemmo","sapeste","seppero"], "congiuntivo presente": ["sappia","sappia","sappia","sappiamo","sappiate","sappiano"] },
+    dire:   { presente: ["dico","dici","dice","diciamo","dite","dicono"],
+              "passato remoto": ["dissi","dicesti","disse","dicemmo","diceste","dissero"], "congiuntivo presente": ["dica","dica","dica","diciamo","diciate","dicano"], "congiuntivo imperfetto": ["dicessi","dicessi","dicesse","dicessimo","diceste","dicessero"] },
+    bere:   { presente: ["bevo","bevi","beve","beviamo","bevete","bevono"],
+              "passato remoto": ["bevvi","bevesti","bevve","bevemmo","beveste","bevvero"], "congiuntivo presente": ["beva","beva","beva","beviamo","beviate","bevano"], "congiuntivo imperfetto": ["bevessi","bevessi","bevesse","bevessimo","beveste","bevessero"] }
   }
 };
 
@@ -545,22 +647,24 @@ const BANK = {
     const set = $("q1-set").value;
     const pool = set === "all" ? Object.assign({}, BANK.reg, BANK.ea, BANK.irr) : BANK[set];
     const verb = pick(Object.keys(pool)), tense = pick(Object.keys(pool[verb])), p = Math.floor(Math.random() * 6);
-    cur = { verb, tense, p, ans: pool[verb][tense][p] };
-    $("q1-q").innerHTML = `<b>${verb}</b> · ${tense} · <b>${P[p]}</b> …`;
+    const pr = (tense.startsWith("congiuntivo") ? "che " : "") + P[p];
+    cur = { verb, tense, p, pr, alts: pool[verb][tense][p].split("/") };
+    cur.ans = cur.alts.join(" / ");
+    $("q1-q").innerHTML = `<b>${verb}</b> · ${tense} · <b>${pr}</b> …`;
     inp.value = ""; fb.textContent = ""; fb.className = "fb"; done = false;
     inp.focus();
   }
   $("q1-f").onsubmit = e => {
     e.preventDefault();
     if (done) return nextQ();
-    const a = inp.value.trim().toLowerCase().replace(/^(io|tu|lui|lei|noi|voi|loro)\s+/, "");
+    const a = inp.value.trim().toLowerCase().replace(/^(che\s+)?(io|tu|lui|lei|noi|voi|loro)\s+/, "");
     if (!a) return;
     tot++; done = true;
-    if (a === cur.ans) { ok++; fb.textContent = `✓ Giusto: ${P[cur.p]} ${cur.ans}`; fb.className = "fb ok"; }
-    else if (noAcc(a) === noAcc(cur.ans)) { ok++; fb.textContent = `≈ Quasi: attenzione all'accento – ${cur.ans}`; fb.className = "fb ok"; }
-    else { fb.textContent = `✗ Sbagliato. La forma corretta è: ${P[cur.p]} ${cur.ans}`; fb.className = "fb ko"; }
+    if (cur.alts.includes(a)) { ok++; fb.textContent = `✓ Giusto: ${cur.pr} ${cur.ans}`; fb.className = "fb ok"; }
+    else if (cur.alts.some(x => noAcc(x) === noAcc(a))) { ok++; fb.textContent = `≈ Quasi: attenzione all'accento – ${cur.ans}`; fb.className = "fb ok"; }
+    else { fb.textContent = `✗ Sbagliato. La forma corretta è: ${cur.pr} ${cur.ans}`; fb.className = "fb ko"; }
     $("q1-score").textContent = `Punteggio: ${ok} / ${tot}`;
-    speakText(`${P[cur.p].replace("lui/lei", "lui")} ${cur.ans}`);
+    speakText(`${cur.pr.replace("lui/lei", "lui")} ${cur.alts[0]}`);
   };
   $("q1-next").onclick = nextQ;
   $("q1-set").onchange = nextQ;
