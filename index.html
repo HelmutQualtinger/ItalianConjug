@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coniugazione dei verbi italiani</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@500;700&family=Oswald:wght@500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ede3cc; --card: #f5eedc; --ink: #161412; --muted: #5a4f40;
+    --line: #161412; --accent: #9e1b16; --end: #9e1b16; --soft: #e2d4b4;
+    --serif: "Bodoni Moda", Didot, "Bodoni 72", Georgia, serif;
+    --caps: "Oswald", "Futura", "Gill Sans", "Arial Narrow", sans-serif;
+    --text: "Crimson Pro", "Iowan Old Style", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12100e; --card: #1c1915; --ink: #ede3cc; --muted: #b0a48c;
+      --line: #ede3cc; --accent: #d4483f; --end: #e0605a; --soft: #2a241d;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; color: var(--ink);
+    background: var(--bg) radial-gradient(circle at 50% 40%, transparent 60%, rgba(0,0,0,.08));
+    font: 19px/1.5 var(--text); }
+  #deck { position: relative; height: 100%; overflow: hidden; }
+  .slide { position: absolute; inset: 0; display: none; padding: 48px 16px 96px;
+    overflow-y: auto; }
+  .slide.active { display: block; }
+  .inner { max-width: 980px; margin: 0 auto; }
+  .title-slide { text-align: center; padding-top: 12vh; }
+  .title-slide .rule { height: 0; border-top: 6px solid var(--ink); border-bottom: 2px solid var(--ink);
+    padding-top: 4px; margin: 0 auto; max-width: 620px; }
+  .title-slide .rule.red { border-color: var(--accent); }
+  h1 { font: 700 clamp(2.2rem, 6vw, 4.2rem)/1.05 var(--serif); text-transform: uppercase;
+    letter-spacing: .04em; margin: .4em 0; color: var(--ink); }
+  .title-slide .lead { font-family: var(--caps); text-transform: uppercase; letter-spacing: .14em;
+    font-size: 1rem !important; color: var(--accent); margin-top: 1.4em; }
+  h2 { font: 700 clamp(1.5rem, 3.4vw, 2.3rem)/1.15 var(--serif); text-transform: uppercase;
+    letter-spacing: .03em; margin: 0 0 .5em; padding-bottom: .3em;
+    border-bottom: 4px double var(--ink); }
+  h3 { font-family: var(--caps); font-weight: 500; text-transform: uppercase; letter-spacing: .1em; }
+  .kicker { color: var(--accent); font: 500 .8rem var(--caps); text-transform: uppercase;
+    letter-spacing: .25em; margin-bottom: .6em; }
+  .kicker::before { content: "■ "; }
+  p.lead { color: var(--muted); font-style: italic; margin: 0 0 1.2em; }
+  ul { padding-left: 1.2em; } li { margin: .3em 0; }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card { background: var(--card); border: 2px solid var(--line); outline: 1px solid var(--line); outline-offset: 3px;
+    padding: 16px 18px; margin: 4px; }
+  .card h3 { margin: 0 0 .6em; font-size: .95rem; color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: .3em; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { padding: 4px 8px; text-align: left; border-bottom: 1px dotted var(--muted); }
+  th { font: 500 .8rem var(--caps); text-transform: uppercase; letter-spacing: .12em; color: var(--accent);
+    border-bottom: 2px solid var(--line); }
+  td.p { color: var(--muted); width: 6.5em; font-style: italic; }
+  .e { color: var(--end); font-weight: 700; }
+  .note { background: var(--soft); border-left: 10px solid var(--ink); padding: 10px 14px; margin-top: 20px; }
+  .ex { font-style: italic; } .tr { color: var(--muted); }
+  .wide { overflow-x: auto; }
+  .wide table td, .wide table th { white-space: nowrap; }
+  nav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center;
+    justify-content: space-between; gap: 12px; padding: 10px 16px; background: var(--bg);
+    border-top: 4px double var(--line); }
+  nav button, .quiz button { background: var(--ink); color: var(--bg); border: 2px solid var(--ink);
+    border-radius: 0; padding: 6px 16px; font: 500 .85rem var(--caps); text-transform: uppercase;
+    letter-spacing: .12em; cursor: pointer; }
+  nav button:hover, .quiz button:hover { background: var(--accent); border-color: var(--accent); }
+  nav button:disabled { opacity: .35; cursor: default; }
+  .quiz { max-width: 640px; }
+  .quiz input, .quiz select { font: inherit; padding: 6px 10px; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--bg); color: var(--ink); }
+  .quiz input { width: 12em; }
+  .quiz .qtext { font-size: 1.3rem; margin: 18px 0 12px; }
+  .quiz form, .quiz .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .quiz .acc button, .quiz .opts button { text-transform: none; }
+  .quiz .acc button { padding: 4px 10px; font-family: var(--text); font-size: 1rem; }
+  .quiz .acc { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .quiz .opts button { font-size: 1.1rem; min-width: 6em; }
+  .fb { min-height: 1.5em; font-weight: 600; }
+  .ok { color: var(--accent); } .ko { color: var(--end); }
+  #count { font: 500 1rem var(--caps); letter-spacing: .2em; }
+  .say { cursor: pointer; border-radius: 4px; }
+  .say:hover { background: var(--soft); }
+  .speaking { background: var(--soft); outline: 2px solid var(--accent); }
+  .quiz input, .quiz select { border-radius: 0 !important; border: 2px solid var(--line) !important; }
+  .quiz .qtext { font-family: var(--serif); }
+  #speak.on { background: var(--accent); border-color: var(--accent); }
+  #bar { position: fixed; top: 0; left: 0; height: 6px; background: var(--accent); transition: width .2s; }
+  @media print {
+    nav, #bar { display: none; }
+    .slide { display: block !important; position: static; page-break-after: always; padding: 24px; }
+    h1 { margin-top: 2em; }
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="deck"></div>
+<nav>
+  <button id="prev">&larr; Indietro</button>
+  <span id="count"></span>
+  <button id="speak" title="Ascolta la diapositiva (tasto S)">🔊 Ascolta</button>
+  <button id="next">Avanti &rarr;</button>
+</nav>
+
+<script>
+const P = ["io", "tu", "lui/lei", "noi", "voi", "loro"];
+
+// "parl|o" -> radice + desinenza evidenziata; le forme senza "|" restano invariate (irregolari)
+const fmt = f => f.includes("|")
+  ? f.replace(/^(.*)\|(.*)$/, (_, s, e) => `${s}<span class="e">${e}</span>`)
+  : f;
+
+const conj = (title, forms, extra = "") => `
+  <div class="card"><h3>${title}</h3>
+    <table>${forms.map((f, i) => `<tr><td class="p">${P[i]}</td><td>${fmt(f)}</td></tr>`).join("")}</table>
+    ${extra}
+  </div>`;
+
+const multi = (head, rows) => `
+  <div class="wide card"><table>
+    <tr><th></th>${head.map(h => `<th>${h}</th>`).join("")}</tr>
+    ${P.map((p, i) => `<tr><td class="p">${p}</td>${rows.map(r => `<td>${fmt(r[i])}</td>`).join("")}</tr>`).join("")}
+  </table></div>`;
+
+const slide = (kicker, title, body, lead = "") => `
+  <div class="inner">
+    <div class="kicker">${kicker}</div>
+    <h2>${title}</h2>
+    ${lead ? `<p class="lead">${lead}</p>` : ""}
+    ${body}
+  </div>`;
+
+const slides = [
+  `<div class="inner title-slide">
+     <div class="rule"></div>
+     <h1>La coniugazione dei verbi italiani</h1>
+     <div class="rule red"></div>
+     <p class="lead" style="font-size:1.2rem">I modelli regolari e i verbi irregolari fondamentali <b>essere</b> e <b>avere</b></p>
+     <p class="tr">Usa i tasti ← / → oppure i pulsanti per cambiare diapositiva.<br>
+     Clicca su una forma verbale per ascoltarla, oppure premi 🔊 Ascolta (tasto S) per sentire tutta la diapositiva.<br>
+     Alla fine ci sono due test interattivi.</p>
+   </div>`,
+
+  slide("Panoramica", "Le tre coniugazioni", `
+    <div class="grid">
+      <div class="card"><h3>1ª coniugazione: -are</h3>parlare, mangiare, lavorare<br><span class="tr">Il gruppo più numeroso, quasi tutto regolare.</span></div>
+      <div class="card"><h3>2ª coniugazione: -ere</h3>credere, vedere, prendere<br><span class="tr">Molti verbi comuni hanno il participio passato irregolare.</span></div>
+      <div class="card"><h3>3ª coniugazione: -ire</h3>dormire, partire, finire<br><span class="tr">Due tipi: semplice (dormo) e con -isc- (finisco).</span></div>
+    </div>
+    <div class="note">Metodo: si toglie la desinenza dell'infinito per ottenere la <b>radice</b> (parl-are &rarr; parl-), poi si aggiunge la desinenza della persona e del tempo.</div>
+    <h3 style="margin-top:24px">I pronomi personali soggetto</h3>
+    <p>io · tu · lui/lei (forma di cortesia: <i>Lei</i>) · noi · voi · loro<br>
+    <span class="tr">Di solito il pronome si omette, perché la desinenza indica già la persona: <i>parlo</i> = io parlo.</span></p>
+  `, "Ogni verbo italiano appartiene a un gruppo, determinato dalla desinenza dell'infinito."),
+
+  slide("Presente · verbi regolari", "Il presente: -are e -ere", `
+    <div class="grid">
+      ${conj("parlare", ["parl|o","parl|i","parl|a","parl|iamo","parl|ate","parl|ano"])}
+      ${conj("credere", ["cred|o","cred|i","cred|e","cred|iamo","cred|ete","cred|ono"])}
+    </div>
+    <div class="note">Le desinenze di io, tu e noi (-o, -i, -iamo) sono uguali in tutte e tre le coniugazioni.</div>
+  `),
+
+  slide("Presente · verbi regolari", "Il presente: -ire (due tipi)", `
+    <div class="grid">
+      ${conj("dormire", ["dorm|o","dorm|i","dorm|e","dorm|iamo","dorm|ite","dorm|ono"])}
+      ${conj("finire – tipo in -isc-", ["fin|isco","fin|isci","fin|isce","fin|iamo","fin|ite","fin|iscono"])}
+    </div>
+    <div class="note">L'infisso <b>-isc-</b> si inserisce solo in io, tu, lui/lei e loro. Verbi comuni in -isc-: capire, preferire, pulire, spedire, costruire, finire.<br>
+    Verbi comuni senza -isc-: dormire, partire, aprire, sentire, offrire, seguire.</div>
+  `),
+
+  slide("Presente · riepilogo", "Le desinenze del presente a confronto", `
+    ${multi(["-are", "-ere", "-ire", "-ire (isc)"], [
+      ["|o","|i","|a","|iamo","|ate","|ano"],
+      ["|o","|i","|e","|iamo","|ete","|ono"],
+      ["|o","|i","|e","|iamo","|ite","|ono"],
+      ["|isco","|isci","|isce","|iamo","|ite","|iscono"]
+    ])}
+    <div class="note">Nella forma di loro l'accento cade sulla radice, non sulla desinenza: <i>PAR-la-no</i>, <i>CRE-do-no</i>, <i>DOR-mo-no</i>.</div>
+  `),
+
+  slide("Ortografia", "Adattamenti ortografici nei verbi in -are", `
+    <div class="grid">
+      <div class="card"><h3>-care / -gare</h3>Si aggiunge una <b>h</b> davanti a -i ed -e per mantenere il suono duro.
+        <table><tr><td>cercare</td><td>cerc<span class="e">h</span>i, cerc<span class="e">h</span>iamo</td></tr>
+        <tr><td>pagare</td><td>pag<span class="e">h</span>i, pag<span class="e">h</span>iamo</td></tr></table></div>
+      <div class="card"><h3>-ciare / -giare / -iare</h3>La <b>i</b> non si raddoppia.
+        <table><tr><td>mangiare</td><td>mangi (non mangii), mangiamo</td></tr>
+        <tr><td>cominciare</td><td>cominci, cominciamo</td></tr>
+        <tr><td>studiare</td><td>studi, studiamo</td></tr></table></div>
+    </div>
+    <div class="note">Sono regole ortografiche, non irregolarità: le desinenze restano regolari.</div>
+  `, "La pronuncia si conserva, quindi cambia la grafia."),
+
+  slide("Imperfetto", "L'imperfetto indicativo", `
+    ${multi(["parlare", "credere", "dormire / finire"], [
+      ["parl|avo","parl|avi","parl|ava","parl|avamo","parl|avate","parl|avano"],
+      ["cred|evo","cred|evi","cred|eva","cred|evamo","cred|evate","cred|evano"],
+      ["dorm|ivo","dorm|ivi","dorm|iva","dorm|ivamo","dorm|ivate","dorm|ivano"]
+    ])}
+    <div class="note">Si usa per azioni passate abituali o in corso e per le descrizioni: <span class="ex">Da bambino giocavo a calcio.</span><br>
+    I verbi in -isc- qui sono del tutto regolari: finivo, finivi, finiva…</div>
+  `, "Vocale tematica (a / e / i) + -vo, -vi, -va, -vamo, -vate, -vano."),
+
+  slide("Futuro semplice", "Il futuro semplice", `
+    ${multi(["parlare", "credere", "dormire"], [
+      ["parler|ò","parler|ai","parler|à","parler|emo","parler|ete","parler|anno"],
+      ["creder|ò","creder|ai","creder|à","creder|emo","creder|ete","creder|anno"],
+      ["dormir|ò","dormir|ai","dormir|à","dormir|emo","dormir|ete","dormir|anno"]
+    ])}
+    <div class="note">Si toglie la <b>-e</b> finale dell'infinito; nei verbi in -are la <b>a</b> diventa <b>e</b> (parlare &rarr; parler-).<br>
+    Valgono le regole ortografiche: cercherò, pagherò, mangerò, comincerò.</div>
+  `, "Desinenze uguali per tutte le coniugazioni: -ò, -ai, -à, -emo, -ete, -anno."),
+
+  slide("Condizionale presente", "Il condizionale presente", `
+    ${multi(["parlare", "credere", "dormire"], [
+      ["parler|ei","parler|esti","parler|ebbe","parler|emmo","parler|este","parler|ebbero"],
+      ["creder|ei","creder|esti","creder|ebbe","creder|emmo","creder|este","creder|ebbero"],
+      ["dormir|ei","dormir|esti","dormir|ebbe","dormir|emmo","dormir|este","dormir|ebbero"]
+    ])}
+    <div class="note">Stessa radice del futuro, desinenze diverse. Si usa per desideri e richieste cortesi: <span class="ex">Vorrei un caffè.</span></div>
+  `, "Desinenze: -ei, -esti, -ebbe, -emmo, -este, -ebbero."),
+
+  slide("Passato prossimo", "Il passato prossimo: ausiliare + participio passato", `
+    <div class="grid">
+      <div class="card"><h3>Participi regolari</h3>
+        <table><tr><td>-are &rarr; <span class="e">-ato</span></td><td>parlato</td></tr>
+        <tr><td>-ere &rarr; <span class="e">-uto</span></td><td>creduto</td></tr>
+        <tr><td>-ire &rarr; <span class="e">-ito</span></td><td>dormito, finito</td></tr></table></div>
+      <div class="card"><h3>Esempi</h3>
+        <span class="ex">Ho parlato con Marco.</span><br><br>
+        <span class="ex">Siamo partiti ieri.</span></div>
+    </div>
+    <div class="note">L'ausiliare è il presente di <b>avere</b> o di <b>essere</b>. Per questo questi due verbi sono i primi irregolari da imparare.</div>
+  `, "Il tempo passato più usato nell'italiano parlato."),
+
+  slide("Verbi irregolari · essere", "Il verbo essere", `
+    ${multi(["presente", "imperfetto", "futuro", "condizionale"], [
+      ["sono","sei","è","siamo","siete","sono"],
+      ["ero","eri","era","eravamo","eravate","erano"],
+      ["sarò","sarai","sarà","saremo","sarete","saranno"],
+      ["sarei","saresti","sarebbe","saremmo","sareste","sarebbero"]
+    ])}
+    <div class="grid" style="margin-top:16px">
+      <div class="card"><h3>Participio passato</h3><b>stato</b> – con l'ausiliare essere: <span class="ex">sono stato/a</span></div>
+      <div class="card"><h3>Attenzione</h3><b>sono</b> vale sia per io sia per loro. <b>è</b> (verbo) ha l'accento; <b>e</b> senza accento è la congiunzione.</div>
+    </div>
+  `),
+
+  slide("Verbi irregolari · avere", "Il verbo avere", `
+    ${multi(["presente", "imperfetto", "futuro", "condizionale"], [
+      ["ho","hai","ha","abbiamo","avete","hanno"],
+      ["avevo","avevi","aveva","avevamo","avevate","avevano"],
+      ["avrò","avrai","avrà","avremo","avrete","avranno"],
+      ["avrei","avresti","avrebbe","avremmo","avreste","avrebbero"]
+    ])}
+    <div class="grid" style="margin-top:16px">
+      <div class="card"><h3>Participio passato</h3><b>avuto</b> – con l'ausiliare avere: <span class="ex">ho avuto</span></div>
+      <div class="card"><h3>La h muta</h3>La <b>h</b> di ho, hai, ha, hanno non si pronuncia. Serve a distinguerle da o (congiunzione), ai (preposizione), a (preposizione), anno (nome).</div>
+    </div>
+    <div class="note">L'imperfetto di avere è regolare; sono irregolari solo il presente, il futuro e il condizionale.</div>
+  `),
+
+  slide("Ausiliari", "Avere o essere nei tempi composti?", `
+    <div class="grid">
+      <div class="card"><h3>avere</h3>
+        <ul><li>Verbi transitivi (con complemento oggetto)</li><li>La maggior parte degli altri verbi: dormire, camminare, lavorare</li></ul>
+        <span class="ex">Ho mangiato una pizza.</span><br><span class="ex">Lei ha dormito bene.</span><br>
+        <span class="tr">Il participio non cambia.</span></div>
+      <div class="card"><h3>essere</h3>
+        <ul><li>Movimento o cambiamento di stato: andare, venire, partire, arrivare, uscire, entrare, nascere, morire, diventare</li>
+        <li>Permanenza: stare, restare, rimanere, essere</li><li>Tutti i verbi riflessivi: alzarsi, lavarsi</li></ul>
+        <span class="ex">Maria è andata.</span> <span class="ex">Loro sono arrivati.</span><br>
+        <span class="tr">Il participio si accorda con il soggetto: -o, -a, -i, -e.</span></div>
+    </div>
+  `),
+
+  slide("Verbi irregolari · presente", "Altri verbi irregolari fondamentali (1)", `
+    ${multi(["andare", "fare", "stare", "dare", "venire", "uscire"], [
+      ["vado","vai","va","andiamo","andate","vanno"],
+      ["faccio","fai","fa","facciamo","fate","fanno"],
+      ["sto","stai","sta","stiamo","state","stanno"],
+      ["do","dai","dà","diamo","date","danno"],
+      ["vengo","vieni","viene","veniamo","venite","vengono"],
+      ["esco","esci","esce","usciamo","uscite","escono"]
+    ])}
+  `, "Il presente dei verbi di uso più frequente."),
+
+  slide("Verbi irregolari · presente", "Altri verbi irregolari fondamentali (2)", `
+    ${multi(["potere", "volere", "dovere", "sapere", "dire", "bere"], [
+      ["posso","puoi","può","possiamo","potete","possono"],
+      ["voglio","vuoi","vuole","vogliamo","volete","vogliono"],
+      ["devo","devi","deve","dobbiamo","dovete","devono"],
+      ["so","sai","sa","sappiamo","sapete","sanno"],
+      ["dico","dici","dice","diciamo","dite","dicono"],
+      ["bevo","bevi","beve","beviamo","bevete","bevono"]
+    ])}
+    <div class="note">I verbi modali (potere, volere, dovere) sono seguiti da un infinito: <span class="ex">Devo lavorare.</span></div>
+  `),
+
+  slide("Participi", "Participi passati irregolari comuni", `
+    <div class="wide card"><table>
+      <tr><th>infinito</th><th>participio</th><th>infinito</th><th>participio</th></tr>
+      <tr><td>fare</td><td><b>fatto</b></td><td>prendere</td><td><b>preso</b></td></tr>
+      <tr><td>dire</td><td><b>detto</b></td><td>mettere</td><td><b>messo</b></td></tr>
+      <tr><td>vedere</td><td><b>visto</b></td><td>scrivere</td><td><b>scritto</b></td></tr>
+      <tr><td>leggere</td><td><b>letto</b></td><td>aprire</td><td><b>aperto</b></td></tr>
+      <tr><td>venire</td><td><b>venuto</b> (essere)</td><td>rimanere</td><td><b>rimasto</b> (essere)</td></tr>
+      <tr><td>nascere</td><td><b>nato</b> (essere)</td><td>morire</td><td><b>morto</b> (essere)</td></tr>
+      <tr><td>bere</td><td><b>bevuto</b></td><td>chiedere</td><td><b>chiesto</b></td></tr>
+    </table></div>
+    <div class="note">La maggior parte dei participi irregolari appartiene ai verbi in -ere. Verbi come andare (andato) e uscire (uscito) sono irregolari al presente ma regolari nel participio.</div>
+  `),
+
+  slide("Uso", "Espressioni idiomatiche con essere e avere", `
+    <div class="grid">
+      <div class="card"><h3>avere + nome (sensazioni e stati)</h3>
+        <table><tr><td>avere fame / sete</td><td class="tr">Ho fame, mangio qualcosa.</td></tr>
+        <tr><td>avere caldo / freddo</td><td class="tr">Hai freddo? Chiudo la finestra.</td></tr>
+        <tr><td>avere sonno</td><td class="tr">Ho sonno, vado a letto.</td></tr>
+        <tr><td>avere ragione / torto</td><td class="tr">Hai ragione tu.</td></tr>
+        <tr><td>avere paura</td><td class="tr">Ha paura del buio.</td></tr>
+        <tr><td>avere … anni</td><td class="tr">Ho trent'anni.</td></tr></table></div>
+      <div class="card"><h3>essere</h3>
+        <table><tr><td>c'è / ci sono</td><td class="tr">C'è un bar qui vicino. Ci sono molti turisti.</td></tr>
+        <tr><td>l'ora</td><td class="tr">Sono le tre. È l'una.</td></tr>
+        <tr><td>essere di + città</td><td class="tr">Sono di Roma.</td></tr>
+        <tr><td>è + aggettivo</td><td class="tr">È vero. È importante.</td></tr></table></div>
+    </div>
+    <div class="note">Dove altre lingue usano "essere" (affamato, assetato…), l'italiano usa spesso <b>avere</b> + nome.</div>
+  `),
+
+  slide("Riepilogo", "Punti chiave", `
+    <ul>
+      <li>Si trova la radice togliendo <b>-are / -ere / -ire</b>, poi si aggiunge la desinenza.</li>
+      <li>Presente: io <b>-o</b>, tu <b>-i</b>, noi <b>-iamo</b> in tutte le coniugazioni; le altre persone dipendono dal gruppo.</li>
+      <li>Alcuni verbi in -ire inseriscono <b>-isc-</b> (finisco), tranne in noi e voi.</li>
+      <li>Imperfetto: vocale + <b>-vo</b>. Futuro: <b>-ò, -ai, -à…</b> Condizionale: <b>-ei, -esti, -ebbe…</b></li>
+      <li><b>essere</b> e <b>avere</b> sono irregolari e fanno da ausiliari in tutti i tempi composti.</li>
+      <li>essere per movimento, cambiamento di stato e verbi riflessivi, con accordo del participio; avere per quasi tutti gli altri.</li>
+      <li>Conviene imparare presto i verbi irregolari più frequenti: andare, fare, stare, venire, potere, volere, dovere.</li>
+    </ul>
+  `),
+
+  slide("Esercizi", "Test 1: coniuga il verbo", `
+    <div class="card quiz" id="q1">
+      <div class="row"><label for="q1-set">Gruppo:</label>
+        <select id="q1-set">
+          <option value="all">tutti i verbi</option>
+          <option value="reg">verbi regolari</option>
+          <option value="ea">essere e avere</option>
+          <option value="irr">altri verbi irregolari (presente)</option>
+        </select></div>
+      <p class="qtext" id="q1-q"></p>
+      <form id="q1-f">
+        <input id="q1-in" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Risposta">
+        <button>Verifica</button>
+        <button type="button" id="q1-next">Prossima &rarr;</button>
+      </form>
+      <div class="acc">${["à","è","é","ì","ò","ù"].map(c => `<button type="button" data-c="${c}">${c}</button>`).join("")}</div>
+      <p class="fb" id="q1-fb"></p>
+      <p class="tr" id="q1-score"></p>
+    </div>
+  `, "Scrivi la forma corretta e premi Invio. Premi di nuovo Invio per la domanda successiva."),
+
+  slide("Esercizi", "Test 2: essere o avere?", `
+    <div class="card quiz" id="q2">
+      <p class="qtext" id="q2-q"></p>
+      <div class="row opts" id="q2-opts"></div>
+      <p class="fb" id="q2-fb"></p>
+      <div class="row"><button type="button" id="q2-next">Prossima &rarr;</button></div>
+      <p class="tr" id="q2-score"></p>
+    </div>
+  `, "Scegli l'ausiliare corretto per il passato prossimo.")
+];
+
+const deck = document.getElementById("deck");
+deck.innerHTML = slides.map(s => `<section class="slide">${s}</section>`).join("");
+const els = [...deck.children];
+const prev = document.getElementById("prev"), next = document.getElementById("next");
+let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), els.length - 1);
+
+// --- Sintesi vocale (Web Speech API) ---
+const synth = window.speechSynthesis;
+const speakBtn = document.getElementById("speak");
+let voice = null;
+const pickVoice = () => {
+  const it = synth.getVoices().filter(v => v.lang.toLowerCase().startsWith("it"));
+  voice = it.find(v => /enhanced|premium/i.test(v.name)) || it.find(v => /alice|paola|luca|federica|google/i.test(v.name)) || it[0] || null;
+};
+if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; } else speakBtn.hidden = true;
+
+const clean = t => t.replace(/\(.*?\)/g, "").replace(/→/g, ", ").replace(/(^|\s)-/g, "$1").replace(/\s+/g, " ").trim();
+const pron = row => row?.cells[0]?.classList.contains("p") ? row.cells[0].textContent.replace("lui/lei", "lui") + " " : "";
+
+// testo da pronunciare per un elemento cliccabile: pronome + forma nelle tabelle
+const textOf = el => clean((el.tagName === "TD" ? pron(el.parentElement) : "") + el.textContent);
+
+function say(items) {
+  synth.cancel();
+  document.querySelectorAll(".speaking").forEach(e => e.classList.remove("speaking"));
+  speakBtn.classList.toggle("on", items.length > 0);
+  items.forEach((el, k) => {
+    const u = new SpeechSynthesisUtterance(textOf(el));
+    u.lang = "it-IT"; u.rate = 0.85; if (voice) u.voice = voice;
+    u.onstart = () => el.classList.add("speaking");
+    u.onend = u.onerror = () => {
+      el.classList.remove("speaking");
+      if (k === items.length - 1) speakBtn.classList.remove("on");
+    };
+    synth.speak(u);
+  });
+}
+
+// rende cliccabili le forme verbali e gli esempi
+els.forEach(s => s.querySelectorAll("td:not(.p), .ex").forEach(el => el.classList.add("say")));
+deck.addEventListener("click", e => { const el = e.target.closest(".say"); if (el) say([el]); });
+
+// lettura della diapositiva: le tabelle colonna per colonna (io…loro), poi gli esempi
+function slideItems(s) {
+  const out = [];
+  s.querySelectorAll("table").forEach(t => {
+    const rows = [...t.rows].filter(r => r.cells[0]?.classList.contains("p"));
+    if (rows.length) {
+      for (let c = 1; c < rows[0].cells.length; c++) rows.forEach(r => out.push(r.cells[c]));
+    } else {
+      t.querySelectorAll("td.say").forEach(td => out.push(td));
+    }
+  });
+  s.querySelectorAll(".ex").forEach(e => out.push(e));
+  return out;
+}
+const toggleSpeak = () => synth.speaking ? say([]) : say(slideItems(els[i]));
+speakBtn.onclick = toggleSpeak;
+
+const roman = n => [[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]]
+  .reduce((s, [v, r]) => { while (n >= v) { s += r; n -= v; } return s; }, "");
+
+function show(n) {
+  if (synth) say([]);
+  i = Math.min(Math.max(n, 0), els.length - 1);
+  els.forEach((el, k) => el.classList.toggle("active", k === i));
+  document.getElementById("count").textContent = `${roman(i + 1)} · ${roman(els.length)}`;
+  document.getElementById("bar").style.width = `${(i + 1) / els.length * 100}%`;
+  prev.disabled = i === 0; next.disabled = i === els.length - 1;
+  history.replaceState(null, "", `#${i + 1}`);
+}
+prev.onclick = () => show(i - 1);
+next.onclick = () => show(i + 1);
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input, select, button")) return;
+  if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); show(i + 1); }
+  if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); show(i - 1); }
+  if (e.key === "Home") show(0);
+  if (e.key === "End") show(els.length - 1);
+  if (e.key.toLowerCase() === "s" && synth) toggleSpeak();
+});
+let tx = null;
+deck.addEventListener("touchstart", e => tx = e.target.closest(".quiz") ? null : e.touches[0].clientX, { passive: true });
+deck.addEventListener("touchend", e => {
+  if (tx === null) return;
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1));
+  tx = null;
+});
+// --- Test ---
+const speakText = t => {
+  if (!synth) return;
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(t);
+  u.lang = "it-IT"; u.rate = 0.85; if (voice) u.voice = voice;
+  synth.speak(u);
+};
+const shuffle = a => { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const noAcc = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+// verbi regolari generati dalle regole delle diapositive
+const PRES = { are: ["o","i","a","iamo","ate","ano"], ere: ["o","i","e","iamo","ete","ono"],
+               ire: ["o","i","e","iamo","ite","ono"], isc: ["isco","isci","isce","iamo","ite","iscono"] };
+const FUT = ["ò","ai","à","emo","ete","anno"], COND = ["ei","esti","ebbe","emmo","este","ebbero"];
+const IMPF = ["vo","vi","va","vamo","vate","vano"];
+function regular(inf, isc = false) {
+  const stem = inf.slice(0, -3), g = inf.slice(-3), v = g[0];
+  const fstem = stem + (g === "ire" ? "ir" : "er");
+  return {
+    presente: PRES[isc ? "isc" : g].map(e => stem + e),
+    imperfetto: IMPF.map(e => stem + v + e),
+    futuro: FUT.map(e => fstem + e),
+    condizionale: COND.map(e => fstem + e)
+  };
+}
+const BANK = {
+  reg: Object.fromEntries([
+    ["parlare"], ["lavorare"], ["abitare"], ["comprare"], ["credere"], ["vendere"], ["ripetere"],
+    ["dormire"], ["partire"], ["sentire"], ["finire", true], ["capire", true], ["preferire", true]
+  ].map(([v, isc]) => [v, regular(v, isc)])),
+  ea: {
+    essere: { presente: ["sono","sei","è","siamo","siete","sono"], imperfetto: ["ero","eri","era","eravamo","eravate","erano"],
+              futuro: ["sarò","sarai","sarà","saremo","sarete","saranno"], condizionale: ["sarei","saresti","sarebbe","saremmo","sareste","sarebbero"] },
+    avere:  { presente: ["ho","hai","ha","abbiamo","avete","hanno"], imperfetto: ["avevo","avevi","aveva","avevamo","avevate","avevano"],
+              futuro: ["avrò","avrai","avrà","avremo","avrete","avranno"], condizionale: ["avrei","avresti","avrebbe","avremmo","avreste","avrebbero"] }
+  },
+  irr: {
+    andare: { presente: ["vado","vai","va","andiamo","andate","vanno"] },
+    fare:   { presente: ["faccio","fai","fa","facciamo","fate","fanno"] },
+    stare:  { presente: ["sto","stai","sta","stiamo","state","stanno"] },
+    dare:   { presente: ["do","dai","dà","diamo","date","danno"] },
+    venire: { presente: ["vengo","vieni","viene","veniamo","venite","vengono"] },
+    uscire: { presente: ["esco","esci","esce","usciamo","uscite","escono"] },
+    potere: { presente: ["posso","puoi","può","possiamo","potete","possono"] },
+    volere: { presente: ["voglio","vuoi","vuole","vogliamo","volete","vogliono"] },
+    dovere: { presente: ["devo","devi","deve","dobbiamo","dovete","devono"] },
+    sapere: { presente: ["so","sai","sa","sappiamo","sapete","sanno"] },
+    dire:   { presente: ["dico","dici","dice","diciamo","dite","dicono"] },
+    bere:   { presente: ["bevo","bevi","beve","beviamo","bevete","bevono"] }
+  }
+};
+
+{
+  const $ = id => document.getElementById(id);
+  const inp = $("q1-in"), fb = $("q1-fb");
+  let cur = null, done = false, ok = 0, tot = 0;
+  function nextQ() {
+    const set = $("q1-set").value;
+    const pool = set === "all" ? Object.assign({}, BANK.reg, BANK.ea, BANK.irr) : BANK[set];
+    const verb = pick(Object.keys(pool)), tense = pick(Object.keys(pool[verb])), p = Math.floor(Math.random() * 6);
+    cur = { verb, tense, p, ans: pool[verb][tense][p] };
+    $("q1-q").innerHTML = `<b>${verb}</b> · ${tense} · <b>${P[p]}</b> …`;
+    inp.value = ""; fb.textContent = ""; fb.className = "fb"; done = false;
+    inp.focus();
+  }
+  $("q1-f").onsubmit = e => {
+    e.preventDefault();
+    if (done) return nextQ();
+    const a = inp.value.trim().toLowerCase().replace(/^(io|tu|lui|lei|noi|voi|loro)\s+/, "");
+    if (!a) return;
+    tot++; done = true;
+    if (a === cur.ans) { ok++; fb.textContent = `✓ Giusto: ${P[cur.p]} ${cur.ans}`; fb.className = "fb ok"; }
+    else if (noAcc(a) === noAcc(cur.ans)) { ok++; fb.textContent = `≈ Quasi: attenzione all'accento – ${cur.ans}`; fb.className = "fb ok"; }
+    else { fb.textContent = `✗ Sbagliato. La forma corretta è: ${P[cur.p]} ${cur.ans}`; fb.className = "fb ko"; }
+    $("q1-score").textContent = `Punteggio: ${ok} / ${tot}`;
+    speakText(`${P[cur.p].replace("lui/lei", "lui")} ${cur.ans}`);
+  };
+  $("q1-next").onclick = nextQ;
+  $("q1-set").onchange = nextQ;
+  document.querySelectorAll("#q1 .acc button").forEach(b => b.onclick = () => {
+    const s = inp.selectionStart ?? inp.value.length;
+    inp.value = inp.value.slice(0, s) + b.dataset.c + inp.value.slice(inp.selectionEnd ?? s);
+    inp.focus(); inp.setSelectionRange(s + 1, s + 1);
+  });
+  nextQ();
+}
+
+{
+  const $ = id => document.getElementById(id);
+  const Q = [
+    ["Maria ___ andata al mercato.", "è", "ha", "andare: verbo di movimento → essere, accordo al femminile."],
+    ["Noi ___ mangiato la pizza.", "abbiamo", "siamo", "mangiare: verbo transitivo → avere."],
+    ["Loro ___ arrivati tardi.", "sono", "hanno", "arrivare: verbo di movimento → essere."],
+    ["Io ___ dormito bene.", "ho", "sono", "dormire → avere."],
+    ["Tu ___ uscita ieri sera?", "sei", "hai", "uscire: verbo di movimento → essere."],
+    ["Voi ___ visto il film?", "avete", "siete", "vedere: verbo transitivo → avere."],
+    ["Lei ___ nata a Napoli.", "è", "ha", "nascere: cambiamento di stato → essere."],
+    ["Io ___ letto un libro.", "ho", "sono", "leggere: verbo transitivo → avere."],
+    ["Noi ___ rimasti a casa.", "siamo", "abbiamo", "rimanere: permanenza → essere."],
+    ["Marco ___ scritto una lettera.", "ha", "è", "scrivere: verbo transitivo → avere."],
+    ["Le ragazze ___ partite stamattina.", "sono", "hanno", "partire: verbo di movimento → essere, accordo al femminile plurale."],
+    ["Tu ___ fatto i compiti?", "hai", "sei", "fare: verbo transitivo → avere."],
+    ["Io mi ___ alzato presto.", "sono", "ho", "alzarsi: verbo riflessivo → essere."],
+    ["Voi ___ venuti in treno.", "siete", "avete", "venire: verbo di movimento → essere."],
+    ["Loro ___ lavorato tutto il giorno.", "hanno", "sono", "lavorare → avere."],
+    ["Il bambino ___ diventato grande.", "è", "ha", "diventare: cambiamento di stato → essere."],
+    ["Io ___ stato in Italia.", "sono", "ho", "essere usa se stesso come ausiliare."],
+    ["Noi ___ avuto fortuna.", "abbiamo", "siamo", "avere usa se stesso come ausiliare."]
+  ];
+  let order = [], cur = null, ok = 0, tot = 0;
+  function nextQ() {
+    if (!order.length) order = shuffle([...Q]);
+    cur = order.pop();
+    $("q2-q").textContent = cur[0];
+    $("q2-fb").textContent = ""; $("q2-fb").className = "fb";
+    $("q2-opts").innerHTML = shuffle([cur[1], cur[2]]).map(o => `<button type="button">${o}</button>`).join("");
+    $("q2-opts").querySelectorAll("button").forEach(b => b.onclick = () => answer(b.textContent));
+  }
+  function answer(a) {
+    $("q2-opts").querySelectorAll("button").forEach(b => b.disabled = true);
+    tot++;
+    const right = a === cur[1];
+    if (right) ok++;
+    $("q2-fb").textContent = `${right ? "✓ Giusto." : "✗ Sbagliato: " + cur[1] + "."} ${cur[3]}`;
+    $("q2-fb").className = "fb " + (right ? "ok" : "ko");
+    $("q2-score").textContent = `Punteggio: ${ok} / ${tot}`;
+    speakText(cur[0].replace("___", cur[1]));
+  }
+  $("q2-next").onclick = nextQ;
+  nextQ();
+}
+
+show(i);
+</script>
+</body>
+</html>
